@@ -1,16 +1,39 @@
 PY = python3
+PY_PACKAGE = sodoku_swap
 
-build: clean
+RUST_DIR = rust
+
+DIST_DIR = dist
+OUT = app.pex
+
+
+TARGET = $(DIST_DIR)/$(OUT)
+RUST_TARGET = $(PY_PACKAGE)/rust.so
+
+build-dev: rust
+
+build-rel: clean rust pex
+
+
+run-rel:
+	$(PY) $(TARGET)
+
+run-dev:
+	$(PY) main.py
+
+rust: 
+	cd $(RUST_DIR) && cargo build
+	cp $(RUST_DIR)/target/debug/lib$(PY_PACKAGE).so $(RUST_TARGET)
+
+pex:
 	pex . \
     --python-shebang '/usr/bin/python3' \
     --not-zip-safe  \
-    -v \
-    -o dist/prtest.pex \
-	-e prtest.main:main
+    -o $(DIST_DIR)/$(OUT) \
+	-e $(PY_PACKAGE).shim:main
+    # -v \
 
 clean:
-	rm -rf prtest.egg-info
-	rm -rf dist
+	rm -rf $(PY_PACKAGE).egg-info $(DIST_DIR) $(RUST_TARGET)
 
-    
-.PHONY: clean build
+.PHONY: clean build rust pex
