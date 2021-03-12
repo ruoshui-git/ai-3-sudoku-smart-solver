@@ -10,20 +10,25 @@ OUT = app.pex
 TARGET = $(DIST_DIR)/$(OUT)
 RUST_TARGET = $(PY_PACKAGE)/rust.so
 
-build-dev: rust
+COPY_RUST_LIB = cp $(RUST_DIR)/target/debug/lib$(PY_PACKAGE).so $(RUST_TARGET)
 
-build-rel: clean rust pex
+build: build-rust
 
-
-run-rel:
-	$(PY) $(TARGET)
-
-run-dev:
+run:
 	$(PY) main.py
 
-rust: 
+build-release: clean build-rust-release pex submit
+
+run-release:
+	$(PY) $(TARGET)
+
+build-rust: 
 	cd $(RUST_DIR) && cargo build
-	cp $(RUST_DIR)/target/debug/lib$(PY_PACKAGE).so $(RUST_TARGET)
+	$(COPY_RUST_LIB)
+
+build-rust-release:
+	cd $(RUST_DIR) && cargo build --release
+	$(COPY_RUST_LIB)
 
 pex:
 	pex . \
@@ -36,4 +41,7 @@ pex:
 clean:
 	rm -rf $(PY_PACKAGE).egg-info $(DIST_DIR) $(RUST_TARGET)
 
-.PHONY: clean build rust pex
+submit: $(TARGET)
+	cp $(TARGET) main.txt
+
+.PHONY: clean build build-release run run-release build-rust build-rust-release pex
