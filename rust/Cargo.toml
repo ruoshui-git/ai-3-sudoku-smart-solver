@@ -1,5 +1,5 @@
 [package]
-name = "sodoku-swap"
+name = "sudoku"
 version = "0.1.0"
 authors = ["Ruoshui <ruoshuim@gmail.com>"]
 edition = "2018"
@@ -7,8 +7,16 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
-name = "sodoku_swap"
+name = "rust"
 crate-type = ["cdylib", "rlib"]
 
+
+[features]
+default = []
+
+python = ["cpython"]
+
 [dependencies]
-cpython = {version = "0.5", features = ["extension-module"]}
+fnv = "1.0.3"
+cpython = {version = "0.5", features = ["extension-module"], optional = true}
+

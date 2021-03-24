@@ -1,4 +1,4 @@
-# AI 2 Sudoku Swap
+# AI 3 Naive Sudoku Solver
 
 ## Running Instructions
 

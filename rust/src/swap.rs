@@ -1,10 +1,12 @@
 use std::collections::HashMap;
 
-use super::board::{FilledBoard, Rule, ALL_RULES};
+use crate::board::positions::{HOUSES, House};
+
+use super::filledboard::FilledBoard;
 
 impl FilledBoard {
     pub fn check_swap(&self) -> (usize, usize) {
-        let bad_rules: Vec<_> = ALL_RULES
+        let bad_rules: Vec<_> = HOUSES
             .iter()
             .filter(|rule| !self.is_valid_on_rule(rule))
             .collect();
@@ -60,7 +62,7 @@ impl FilledBoard {
         }
     }
 
-    fn get_conflict(&self, rule: &&Rule) -> Vec<usize> {
+    fn get_conflict(&self, rule: &&House) -> Vec<usize> {
         let mut val_pos = vec![];
         for pos in rule.iter().cloned() {
             let val = self.data[pos];
@@ -86,7 +88,7 @@ impl FilledBoard {
 
 #[cfg(test)]
 mod tests {
-    use crate::board::FilledBoard;
+    use crate::filledboard::FilledBoard;
 
     const SWAPPED_BOARD0: FilledBoard = FilledBoard {
         #[rustfmt::skip]

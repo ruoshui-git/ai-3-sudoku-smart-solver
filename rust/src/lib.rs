@@ -1,21 +1,24 @@
-mod board;
+#![allow(dead_code)]
+
+pub mod board;
+mod filledboard;
+pub mod naive;
 mod swap;
 
-use board::FilledBoard;
-use cpython::{py_fn, py_module_initializer, PyResult, Python};
+#[cfg(feature = "python")]
+use filledboard::FilledBoard;
+#[cfg(feature = "python")]
+use std::env;
+#[cfg(feature = "python")]
+use std::io::BufWriter;
+#[cfg(feature = "python")]
+use std::process;
+
 use std::{
-    env,
     fs::File,
-    io::{self, BufRead, BufReader, BufWriter, Write},
-    process, usize,
+    io::{self, BufRead, BufReader, Write},
+    usize,
 };
-// add bindings to the generated python module
-// N.B: names: "rust" must be the name of the `.so` or `.pyd` file
-py_module_initializer!(rust, |py, m| {
-    m.add(py, "__doc__", "This module is implemented in Rust.")?;
-    m.add(py, "run", py_fn!(py, run_py()))?;
-    Ok(())
-});
 
 #[allow(dead_code)]
 fn solve_csv(infile: &str, outfile: &str, lineno: usize) -> io::Result<()> {
@@ -33,6 +36,17 @@ fn solve_csv(infile: &str, outfile: &str, lineno: usize) -> io::Result<()> {
     Ok(())
 }
 
+#[cfg(feature = "python")]
+use cpython::{py_fn, py_module_initializer, PyResult, Python};
+#[cfg(feature = "python")]
+// add bindings to the generated python module
+// N.B: names: "rust" must be the name of the `.so` or `.pyd` file
+py_module_initializer!(rust, |py, m| {
+    m.add(py, "__doc__", "This module is implemented in Rust.")?;
+    m.add(py, "run", py_fn!(py, run_py()))?;
+    Ok(())
+});
+#[cfg(feature = "python")]
 fn run_py(_: Python) -> PyResult<usize> {
     // println!("Hello from rust!");
     let mut args: Vec<String> = env::args().collect();
@@ -57,12 +71,4 @@ fn run_py(_: Python) -> PyResult<usize> {
     // solve_csv(&args[1], &args[2], args[3].parse().unwrap()).expect("io error");
     // println!("{:?}", args);
     Ok(0)
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
 }
