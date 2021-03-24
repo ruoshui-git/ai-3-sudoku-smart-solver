@@ -1,5 +1,5 @@
 PY = python3
-PY_PACKAGE = sodoku_swap
+PY_PACKAGE = pyshim
 
 RUST_DIR = rust
 
