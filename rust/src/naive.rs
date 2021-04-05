@@ -4,7 +4,7 @@ use fnv::FnvHashSet;
 
 use crate::board::{positions::NEIGHBORS, Board};
 
-fn find_possibles(board: &Board, index: usize) -> FnvHashSet<NonZeroU8> {
+pub(crate) fn find_possibles(board: &Board, index: usize) -> FnvHashSet<NonZeroU8> {
     let seen: FnvHashSet<NonZeroU8> = NEIGHBORS[index]
         .iter()
         .flat_map(|i| board.data[*i as usize].value)
@@ -117,6 +117,7 @@ pub fn recursive_solve(board: Board) -> SolveState {
                         res.nbacktracks += nbacktracks;
                         return res;
                     } else {
+                        // board is not solved, so add 1 to backtrack counts
                         nbacktracks += res.nbacktracks + 1;
                         // continue solving
                     }

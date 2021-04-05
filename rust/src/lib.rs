@@ -3,6 +3,7 @@
 pub mod board;
 mod filledboard;
 pub mod naive;
+pub mod smart;
 mod swap;
 
 #[cfg(feature = "python")]
